@@ -17,12 +17,13 @@ class Button01(QMainWindow):
 
         self.statusBar()
 
-        self.setWindowTitle('Button01')
+        self.setWindowTitle('kadai5')
         self.show()
 
     def button01Clicked(self):
         sender = self.sender()
-        self.statusBar().showMessage(sender.text() + ' Push Button01')
+        self.statusBar().showMessage(sender.text() + ' Pushu Button01')
+        print("on")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
