@@ -4,8 +4,10 @@
 import sys
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication
 
+
 class Button01(QMainWindow):
     flg = False
+
     def __init__(self):
         super().__init__()
         self.initUI()
