@@ -4,10 +4,9 @@
 ## 課題6
 OpenCVで目の検出
 
-ルートにAnacondaでインストールしたOpenCVのバージョンをおいて，カスケードのパスをそこに指定したら動いたっぽい
+* ルートにAnacondaでインストールしたOpenCVのバージョンをおいて，カスケードのパスをそこに指定したら動いたっぽい  
+* windows側のPATHは変更してない  
+* opencvのインストールは [Windows Anaconda Python 3.5 への OpenCV 3.1 のインストール](http://nixeneko.hatenablog.com/entry/2016/01/20/012509)を参考にAnacondaにインストール
 
-`\Anaconda3\pkgs\opencv3-3.1.0-py35_0\Library\include\opencv2\objdetect`
-
-にファイル追加したことが関係あるのか？  
-windows側のPATHは変更してない  
-opencvのインストールは`http://nixeneko.hatenablog.com/entry/2016/01/20/012509`を参考にAnacondaにインストール
+結果的にカスケードのパスが間違ってたっぽい  
+Anaconda3経由で入れたカスケードだと精度が低かったため，OpenCV3.1.0をDLして使用
