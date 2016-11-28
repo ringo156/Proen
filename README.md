@@ -9,4 +9,7 @@ OpenCVで目の検出
 * opencvのインストールは [Windows Anaconda Python 3.5 への OpenCV 3.1 のインストール](http://nixeneko.hatenablog.com/entry/2016/01/20/012509)を参考にAnacondaにインストール
 
 結果的にカスケードのパスが間違ってたっぽい  
-Anaconda3経由で入れたカスケードだと精度が低かったため，OpenCV3.1.0をDLして使用
+
+## 課題7
+OpenCVで唇の検出するプログラムを作成し、GTKでGUIを作成する  
+ubuntuにOpenCVとGTK3を入れてC++で書く予定
