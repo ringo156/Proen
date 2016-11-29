@@ -10,6 +10,7 @@ using namespace cv;
 using namespace std;
 
 Mat detectFaceInImage(Mat &image, string &cascade_file);
+Mat HSVBinaryFunc(Mat &image);
 string intToString(int val);
 
 int main(int argc, char const *argv[])
@@ -46,11 +47,15 @@ Mat detectFaceInImage(Mat &image, string &cascade_file)
     //顔画像の切り抜き
     for (int i=0; i < faces.size(); i++){
       Mat cut_img(image, cv::Rect(faces[i].x, faces[i].y, faces[i].width, faces[i].height));
+      //Mat binary_image = HSVBinaryFunc(cut_img);
+
+      //Debug
       string str = intToString(i);//名前付ける
       imshow(str, cut_img);
       string jpg = ".jpg";
       str = str + jpg;
       imwrite (str, cut_img);
+
     }
     for (int i = 0; i < faces.size(); i++) {
         rectangle(image, Point(faces[i].x, faces[i].y), Point(faces[i].x + faces[i].width, faces[i].y + faces[i].height), Scalar(0, 200, 0), 3, CV_AA);
@@ -58,4 +63,27 @@ Mat detectFaceInImage(Mat &image, string &cascade_file)
     imwrite("result.jpg", image);
     //imshow("cut_face", cut_img);
     return image;
+}
+
+Mat HSVBinaryFunc(Mat &image)
+{
+  int width = image.cols;
+  int height = image.rows;
+  //HSV
+  Mat hsv_image;
+  cvtColor(image, hsv_image, CV_BGR2HSV);
+  uchar hue, sat, val;
+  Mat mouth_image = Mat(Size(width, height), CV_8UC1);
+  for (int y = 0; y < height;y++){
+    for(int x = 0; x < width;x++){
+      hue = hsv_image.at<Vec3b>(y, x)[0];
+      sat = hsv_image.at<Vec3b>(y, x)[1];
+      val = hsv_image.at<Vec3b>(y, x)[2];
+      if(((hue < 8) || (hue > 168)) && (sat > 100))
+        mouth_image.at<uchar>(y, x) = 0;
+      else
+        mouth_image.at<uchar>(y, x) = 255;
+    }
+  }
+  return mouth_image;
 }
