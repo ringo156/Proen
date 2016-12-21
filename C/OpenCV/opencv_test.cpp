@@ -12,7 +12,7 @@ using namespace std;
 int main(int argc, const char** argv ) {
 
   //Mat redImg(cv::Size(320, 240), CV_8UC3, cv::Scalar(0, 0, 255));
-  Mat image = imread("image-18.jpg");
+  Mat image = imread("lena.jpg");
   int width = image.cols;
   int height = image.rows;
   //HSV

@@ -1,9 +1,14 @@
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/objdetect.hpp>
-#include <iostream>
+
 #include <stdio.h>
+#include <iostream>
+#include <string>
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/flann/miniflann.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/objdetect/objdetect.hpp"
+//#include "opencv2/objdetect.hpp"
+#include <iostream>
 #include <string>
 
 using namespace cv;
@@ -15,8 +20,8 @@ string intToString(int val);
 
 int main(int argc, char const *argv[])
 {
-    Mat image = imread("image-18.jpg");
-    string filename = "/home/ringo/prog/opencv-2.4.13/data/haarcascades/haarcascade_frontalface_alt.xml";
+    Mat image = imread("akb.jpg");
+    string filename = "/home/ringo/prog/opencv-2.4.11/data/haarcascades/haarcascade_frontalface_alt.xml";
     Mat detectFaceImage = detectFaceInImage(image, filename);
     imshow("detect face", detectFaceImage);
     waitKey(0);
@@ -47,14 +52,14 @@ Mat detectFaceInImage(Mat &image, string &cascade_file)
     //顔画像の切り抜き
     for (int i=0; i < faces.size(); i++){
       Mat cut_img(image, cv::Rect(faces[i].x, faces[i].y, faces[i].width, faces[i].height));
-      //Mat binary_image = HSVBinaryFunc(cut_img);
+      Mat binary_image = HSVBinaryFunc(cut_img);
 
       //Debug
       string str = intToString(i);//名前付ける
-      imshow(str, cut_img);
+      imshow(str, binary_image);
       string jpg = ".jpg";
       str = str + jpg;
-      imwrite (str, cut_img);
+      imwrite (str, binary_image);
 
     }
     for (int i = 0; i < faces.size(); i++) {
