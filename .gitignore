@@ -32,6 +32,6 @@
 *.dSYM/
 
 # Picture
-* .jpg
-* .jpeg
-* .png
+*.jpg
+*.jpeg
+*.png
