@@ -7,7 +7,7 @@ cv2.imshow('img', img)
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)    # grayscale conversion
 cv2.imshow("gray", gray)
 
-cascade_path='/home/ringo/anaconda3/pkgs/opencv3-3.1.0-py35_0/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml'
+cascade_path='/usr/share/opencv/haarcascades/haarcascade_frontalface_alt2.xml'
 # cascade_path =  'C:/opencv-3.1.0/sources/data/haarcascades/haarcascade_frontalface_default.xml'
 cascade = cv2.CascadeClassifier(cascade_path)
 face_cascade = cascade.detectMultiScale(img, 1.1, 3)
@@ -22,6 +22,6 @@ else:
 
 cv2.imshow("detect", img)
 
-print(test)
-print(face_cascade)
+print("test")
+
 cv2.waitKey(0)
