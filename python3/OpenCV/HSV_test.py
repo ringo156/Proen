@@ -4,13 +4,13 @@ import cv2
 import numpy as np
 
 kernel = np.ones((5,5), np.uint8)
-img = cv2.imread('07.jpg')
+img = cv2.imread('./test/10_face_36.jpg')
 # フレームをHSVに変換
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
 # 取得する色の範囲を指定する
-lower_yellow = np.array([0, 40, 40])
-upper_yellow = np.array([40, 255, 255])
+lower_yellow = np.array([0, 30, 80])
+upper_yellow = np.array([15, 200, 255])
 
 # 指定した色に基づいたマスク画像の生成
 img_mask = cv2.inRange(hsv, lower_yellow, upper_yellow)
