@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="main.js"></script>
+    <script>
+        var query_vars= getQueryVars();
+        var id = query_vars['id'];
+        document.write(id);
+
+        if(id == 1){
+            location.href=`https://twitter.com/`;
+        }
+
+        //var getQueryVars = function()
+        function getQueryVars()
+        {
+            // aray for return value
+            var vars = [];
+            // get query char and divide "&"
+            var query_list = window.location.search.substring(1).split('&');
+            // TEMP value for get value
+            var temp_arr;
+            // 
+            query_list.forEach(function(e, i, a){
+                temp_arr = e.split('=');
+                vars[ temp_arr[0] ] = temp_arr[1];
+            })
+            return vars;
+        }
+        
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

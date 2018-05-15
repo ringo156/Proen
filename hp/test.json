@@ -1,0 +1,19 @@
+{
+    "book1":{
+    "title":"Python Beginners",
+    "year": 2005 ,
+    "page": 399
+    },
+
+    "book2":{
+        "title": "Python Developers",
+        "year": 2006 ,
+    "page": 650
+    },
+
+    "testPage":{
+        "title": "サンプル記事",
+        "data": "2018/1/1/",
+        "category": "サンプル記事"
+    }
+}
