@@ -27,27 +27,6 @@
         my_func("JavaScript");
         my_func("SoC-FPGA");
 
-
-$(function() {
-  $.getJSON("sample.json" , function(data) {
-    var
-      ulObj = $("#demo"),
-      len = data.length;
-
-    for(var i = 0; i < len; i++) {
-      ulObj.append($("<li>").attr({"id":data[i].id}).text(data[i].name));
-    }
-  });
-});
-
-        // var query_vars= getQueryVars();
-        // var id = query_vars['id'];
-        // document.write(id);
-        function my_func(test)
-        {
-            document.write(test+"楽しい<br>");
-        }
-        //var getQueryVars = function()
         function getQueryVars()
         {
             // aray for return value
@@ -56,13 +35,41 @@ $(function() {
             var query_list = window.location.search.substring(1).split('&');
             // TEMP value for get value
             var temp_arr;
-            // 
+            //
             query_list.forEach(function(e, i, a){
                 temp_arr = e.split('=');
                 vars[ temp_arr[0] ] = temp_arr[1];
             })
             return vars;
         }
+
+        function my_func(test)
+        {
+            document.write(test+"楽しい<br>");
+        }
+        //var getQueryVars = function()
+
+        $(function() {
+            $.getJSON("sample.json" , function(data) {
+                var
+                ulObj = $("#demo"),
+                len = data.length;
+
+                var query_vars= getQueryVars();
+                var id = query_vars['id'];
+                if(id=="undefined"){
+                    console.log("break");
+                    return;
+                }
+
+                console.log(id);
+                console.log(data[id].first);
+
+                // for(var i=0;i<len;i++){
+                //     console.log(data[i].first);
+                // }
+            });
+        });
     </script>
 </body>
 </html>
