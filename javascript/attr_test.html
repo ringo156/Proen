@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <script src="main.js"></script>
+    <script src="test.js"></script>
     	<!-- jQuery -->
 	<script src="js/jquery.min.js"></script>
 	<!-- jQuery Easing -->
@@ -14,21 +15,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script>
-        function getQueryVars()
-        {
-            // aray for return value
-            var vars = [];
-            // get query char and divide "&"
-            var query_list = window.location.search.substring(1).split('&');
-            // TEMP value for get value
-            var temp_arr;
-            //
-            query_list.forEach(function(e, i, a){
-                temp_arr = e.split('=');
-                vars[ temp_arr[0] ] = temp_arr[1];
-            })
-            return vars;
-        }
+
         var query_vars = getQueryVars();
         console.log(query_vars);
         var id = query_vars["id"];
@@ -40,9 +27,21 @@
                 $("#frameSample").attr("src", "after.html");
             });
         }
+        $.getJSON("fdata.json")
+            .done(function(data){
+                console.log(id);
+                console.log(data[id].title);
+                var url = data[id].title + ".html";
+                console.log(url);
+                $("#frameSample").attr("src", url);
+            })
+
+
     </script>
 </head>
 <body>
+
+    </script>
     <iframe id="frameSample" src="before.html" width="600" height="800" frameborder="0"></iframe>
     <!-- <button id="btnChange">change</button> -->
 </body>
