@@ -13,3 +13,15 @@ function getQueryVars()
     })
     return vars;
 }
+
+function readJSON(id, filename)
+{
+    $.getJSON(filename)
+        .done(function(data){
+            // console.log(id);
+            // console.log(data[id].title);
+            var url = data[id].title + ".html";
+            // console.log(url);
+            return url;
+    })
+}
