@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html>
+<style text="text/css">
+.blog-embed {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-top: 150%; }
+  .blog-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; }
+</style>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,31 +32,13 @@
 </head>
 <body>
 
-    <iframe id="frameSample" src="before.html" width="600" height="800" frameborder="0"></iframe>
+    <div class="blog-embed">
+        <iframe id="frameSample" src="before.html" width="600" height="800" frameborder="0"></iframe>
+    </div>
     <!-- <button id="btnChange">change</button> -->
     <script>
-
         var query_vars = getQueryVars();
-        console.log(query_vars);
-        var id = query_vars["id"];
-        if(id == "undefined"){
-            console.log("break");
-        }
-        else if(id == 1){
-            $(function() {
-                $("#frameSample").attr("src", "after.html");
-            });
-        }
-        var url = readJSON(id, "fdata.json");
-        // $.getJSON("fdata.json")
-        //     .done(function(data){
-        //         console.log(id);
-        //         console.log(data[id].title);
-        //         var url = data[id].title + ".html";
-        //         console.log(url);
-        //         $("#frameSample").attr("src", url);
-        //     })
-
+        getURL(query_vars);
     </script>
 </body>
 

@@ -1,6 +1,6 @@
 [
     {
-        "title": "samplepost",
+        "title": "testpost",
         "category":"雑記",
         "date": {
             "year": "2018",
@@ -9,7 +9,7 @@
         }
     },
     {
-        "title": "myfirsthps-fpga",
+        "title": "after",
         "category": "fpga",
         "date": {
             "year": "2018",

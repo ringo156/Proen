@@ -1,3 +1,5 @@
+const jsonfile = "fdata.json"
+
 function getQueryVars()
 {
     // aray for return value
@@ -14,14 +16,53 @@ function getQueryVars()
     return vars;
 }
 
-function readJSON(id, filename)
-{
-    $.getJSON(filename)
-        .done(function(data){
-            // console.log(id);
-            // console.log(data[id].title);
-            var url = data[id].title + ".html";
-            // console.log(url);
-            return url;
+// function readJSON(id, filename)
+// {
+//     $.getJSON(filename)
+//         .done(function(data){
+//             console.log(id);
+//             console.log(data[id].title);
+//             var url = data[id].title + ".html";
+//             console.log(url);
+//             return url;
+//     })
+// }
+
+function getURL(query_vars){
+    if ("page" in query_vars){//page is existence
+        var page = query_vars["page"];
+        if(page === void 0){//page is null
+            attrURL(0);
+        }
+        else{
+            attrURL(page);
+        }
+    }
+    else{// page is not existence
+        attrURL(0);
+    }
+}
+
+function readJSON(){
+    return $.ajax({
+        type: "get",
+        url: jsonfile,
+        dataType: "json",
     })
+}
+
+function attrURL(page){
+    readJSON().done(function(result){
+        console.log(result.length);
+        if(page > result.length){
+            var url = result[result.length-1].title + ".html";
+        }
+        else{
+            var url = result[page].title + ".html";
+        }
+        console.log(url);
+        $('#frameSample').attr('src', url);
+    }).fail(function(result) {
+        console.log(result);
+    });
 }
