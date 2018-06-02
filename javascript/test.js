@@ -16,18 +16,6 @@ function getQueryVars()
     return vars;
 }
 
-// function readJSON(id, filename)
-// {
-//     $.getJSON(filename)
-//         .done(function(data){
-//             console.log(id);
-//             console.log(data[id].title);
-//             var url = data[id].title + ".html";
-//             console.log(url);
-//             return url;
-//     })
-// }
-
 function getURL(query_vars){
     if ("page" in query_vars){//page is existence
         var page = query_vars["page"];
@@ -55,6 +43,7 @@ function attrURL(page){
     readJSON().done(function(result){
         console.log(result.length);
         if(page > result.length){
+            // add serch dir
             var url = result[result.length-1].title + ".html";
         }
         else{
