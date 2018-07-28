@@ -1,11 +1,13 @@
 #include <iostream>
 #include <fstream>
+#include <time.h>
 #include "opencv2/opencv.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "Labeling.h"
 
 #define RIGHT 2
 #define LEFT  1
+#define DIST_CAMERA 126.0
 
 using namespace std;
 
@@ -15,11 +17,11 @@ class ImageProcessing{
         int median_size;
         int morpho_n;
         int morpho;
-        //int H_max, H_min, S_max, S_min, V_max, V_min;
+
         LabelingBS label;
     public:
+        int H_max, H_min, S_max, S_min, V_max, V_min;
     ImageProcessing(){
-        /*
         H_max = 15;
         H_min = 0;
         S_max = 255;
@@ -27,14 +29,14 @@ class ImageProcessing{
         V_max = 143;
         V_min = 36;
         cv::namedWindow("Threshold", 1);
-        
-        cv::createTrackbar("H_max", "Threshold", &H_max, 255);
-        cv::createTrackbar("H_min", "Threshold", &H_min, 255);
+
+        cv::createTrackbar("H_max", "Threshold", &H_max, 180);
+        cv::createTrackbar("H_min", "Threshold", &H_min, 180);
         cv::createTrackbar("S_max", "Threshold", &S_max, 255);
         cv::createTrackbar("S_min", "Threshold", &S_min, 255);
         cv::createTrackbar("V_max", "Threshold", &V_max, 255);
         cv::createTrackbar("V_min", "Threshold", &V_min, 255);
-        */
+
     }
 
     ~ImageProcessing(){
@@ -57,69 +59,15 @@ class ImageProcessing{
         }
         return binImg;
     }
-/*
-    void extraction(cv::Mat* src, cv::Mat* dst,int code)
-    {
-        cv::Mat colorImage;
-        int lower[3];
-        int upper[3];
-        int ch1Lower, ch1Upper, ch2Lower, ch2Upper;
-        int ch3Lower, ch3Upper;
-        ch1Lower = H_min;
-        ch1Upper = H_max;
-        ch2Lower = S_min;
-        ch2Upper = S_max;
-        ch3Lower = V_min;
-        ch3Upper = V_max;
-
-        cv::Mat lut = cv::Mat(256, 1, CV_8UC3);   
-
-        cv::cvtColor(*src, colorImage, code);
-
-        lower[0] = ch1Lower;
-        lower[1] = ch2Lower;
-        lower[2] = ch3Lower;
-
-        upper[0] = ch1Upper;
-        upper[1] = ch2Upper;
-        upper[2] = ch3Upper;
-
-        for (int i = 0; i < 256; i++){
-            for (int k = 0; k < 3; k++){
-                if (lower[k] <= upper[k]){
-                    if ((lower[k] <= i) && (i <= upper[k])){
-                        lut.data[i*lut.step+k] = 255;
-                    }else{
-                        lut.data[i*lut.step+k] = 0;
-                    }
-                }else{
-                    if ((i <= upper[k]) || (lower[k] <= i)){
-                        lut.data[i*lut.step+k] = 255;
-                    }else{
-                        lut.data[i*lut.step+k] = 0;
-                    }
-                }
-            }
-        }
-
-        //LUTを使用して二値化
-        cv::LUT(colorImage, lut, colorImage);
-
-        //Channel毎に分解
-        std::vector<cv::Mat> planes;
-        cv::split(colorImage, planes);
-
-        //マスクを作成
-        cv::Mat maskImage;
-        cv::bitwise_and(planes[0], planes[1], maskImage);
-        cv::bitwise_and(maskImage, planes[2], maskImage);
-
-        //出力
-        cv::Mat maskedImage;
-        src->copyTo(maskedImage, maskImage);
-        *dst = maskImage;
+    cv::Mat extruction(cv::Mat binImg){
+        cv::Mat hsvImage;
+        cvtColor(binImg, hsvImage, CV_BGR2HSV);
+        cv::inRange(hsvImage,
+            cv::Scalar(H_min, S_min, V_min, 0),
+            cv::Scalar(H_max,S_max,V_max, 0),
+            binImg);
+        return binImg;
     }
-    */
 
     void labeling(cv::Mat binImg,int thSize1,int thSize2,
         cv::Point &center,cv::Point &point1,cv::Point &point2){
@@ -151,39 +99,23 @@ class ImageProcessing{
             }
         }
     }
+
 };
 
 int main(int argh, char* argv[])
 {
     const std::string RIGHT_WIN = "RightCapture";
     const std::string LEFT_WIN  = "LeftCapture";
-    const int CAP_WIDTH = 640;
-    const int CAP_HEIGHT = 480;
+    const int CAP_WIDTH = 1280;
+    const int CAP_HEIGHT = 960;
+    double dpi = 3.6/1280.0*1.5625;
+    double msec;
     cv::Mat right_result;
     cv::Mat left_result;
     cv::Point center_r, center_l, point1, point2, d;
     ImageProcessing impro;
     ofstream outputfile("test.txt");
-    outputfile << "z, d, zz, x, xtes\n";
-    
-    //Create Trackbar from HSV threshold
-    int H_max, H_min, S_max, S_min, V_max, V_min;
-    
-        H_max = 165;
-        H_min = 150;
-        S_max = 255;
-        S_min = 100;
-        V_max = 255;
-        V_min = 70;
-    
-        cv::namedWindow("Threshold", 1);
-      
-        cv::createTrackbar("H_max", "Threshold", &H_max, 180);
-        cv::createTrackbar("H_min", "Threshold", &H_min, 180);
-        cv::createTrackbar("S_max", "Threshold", &S_max, 255);
-        cv::createTrackbar("S_min", "Threshold", &S_min, 255);
-        cv::createTrackbar("V_max", "Threshold", &V_max, 255);
-        cv::createTrackbar("V_min", "Threshold", &V_min, 255);
+    outputfile << "Z, d, z\n";
 
     impro.setting(7, 1, cv::MORPH_ERODE, 1, 3);
 
@@ -209,9 +141,13 @@ int main(int argh, char* argv[])
     left.set(CV_CAP_PROP_FRAME_HEIGHT, CAP_HEIGHT);
     left.set(CV_CAP_PROP_FRAME_WIDTH, CAP_WIDTH);
 
+    cv::Rect rect(140, 105, 1000, 750);
     //ループ
     while(1)
     {
+        struct timespec start_val;
+		clock_gettime(CLOCK_MONOTONIC,&start_val);
+
         cv::Mat right_frame;
         cv::Mat left_frame;
         // 1フレームキャプチャ
@@ -227,59 +163,74 @@ int main(int argh, char* argv[])
             break;
         }
 
-        cvtColor(right_frame, right_result, CV_BGR2HSV);
-        cvtColor(left_frame, left_result, CV_BGR2HSV);
+        cv::Mat right_frame_r(right_frame, rect);
+        cv::resize(right_frame_r, right_frame_r, cv::Size(), 0.64, 0.64);
+        cv::Mat left_frame_r(left_frame, rect);
+        cv::resize(left_frame_r, left_frame_r, cv::Size(), 0.64, 0.64);
 
-        cv::inRange(right_result,
-            cv::Scalar(H_min, S_min, V_min, 0),
-            cv::Scalar(H_max,S_max,V_max, 0),
-            right_result);
-        cv::inRange(left_result,
-            cv::Scalar(H_min, S_min, V_min, 0),
-            cv::Scalar(H_max,S_max,V_max, 0),
-            left_result);
+        right_result = impro.extruction(right_frame_r);
+        left_result  = impro.extruction(left_frame_r);
+
+        cv::Mat right_red;
+        cv::Mat left_red;
+
+        cvtColor(right_frame_r, right_red, CV_BGR2HSV);
+        cv::inRange(right_red,
+            cv::Scalar(174, impro.S_min, impro.V_min, 0),
+            cv::Scalar(180, impro.S_max, impro.V_max, 0),
+            right_red);
+        cvtColor(left_frame_r, left_red, CV_BGR2HSV);
+        cv::inRange(left_red,
+            cv::Scalar(174, impro.S_min, impro.V_min, 0),
+            cv::Scalar(180, impro.S_max, impro.V_max, 0),
+            left_red);
+
+        right_result = right_result + right_red;
+        left_result = left_result + left_red;
 
         right_result = impro.filter(right_result);
-        left_result = impro.filter(left_result);  
+        left_result = impro.filter(left_result);
         impro.labeling(right_result,1000,20,center_r,point1,point2);
-        cv::circle(right_frame, center_r, 10, cv::Scalar(0, 0, 0), -1, 1, 0);
+        cv::circle(right_frame_r, center_r, 10, cv::Scalar(0, 0, 0), -1, 1, 0);
         impro.labeling(left_result,1000,20,center_l,point1,point2);
-        cv::circle(left_frame, center_l, 10, cv::Scalar(0, 0, 0), -1, 1, 0);  
-        d = center_l - center_r;
-
-        double z, x, f;
-        if(d.x == 0){
-            z = 0;
-        }
-        else{
-           // z = 4.0 * 96.0 / (double)d.x;
-            z = (81296.64 - 10.8672 * (double)d.x) / (double)d.x;
-        }
-        cout << "d.x = " << d.x << "pixel,z = " << z << "mm" << endl;
+        cv::circle(left_frame_r, center_l, 10, cv::Scalar(0, 0, 0), -1, 1, 0);
+        d = center_l - center_r; //視差の計算
 
         //表示
-        cv::imshow(RIGHT_WIN, right_frame);
+        cv::imshow(RIGHT_WIN, right_frame_r);
         cv::imshow("right result", right_result);
-        cv::imshow(LEFT_WIN, left_frame);
+        cv::imshow(LEFT_WIN, left_frame_r);
         cv::imshow("left result", left_result);
 
         //キー待ち
         int inp_key = cv::waitKey(1);
 
+        double num,dis;
+        dis = DIST_CAMERA * 4.0 / (dpi * d.x);
+        //dis = dist * 4.0 / (dpi * d.x);
         //入力あり？
         if (inp_key >= 0) {
+
             if(inp_key == 'm'){
-                double num;
+                // Z, d, z
                 cin >> num;
-                num = num - 300.0;
-                x = num * d.x / 96.0;
-                f = num / z;
-                outputfile << num << ", " << d.x << ", " << z << ", " 
-                << x <<", "<< f << endl;
+                num = num - 80.0;
+                outputfile << num << ", " << d.x << ", " << dis <<endl;
             }
             else if (inp_key == 27 || inp_key == 81 || inp_key == 113) break;
         }
-    } 
+        struct timespec end;
+		clock_gettime(CLOCK_MONOTONIC,&end);
+		long sec = end.tv_sec - start_val.tv_sec;
+		long nsec = end.tv_nsec-start_val.tv_nsec;
+		if(nsec < 0){
+			sec--;
+			nsec += 1000000000L;
+		}
+		msec = sec*1000+nsec/1000000;
+
+        cout << "time = " << msec << "ms, d.x = " << d.x << "pixel, " << "z = " << dis << "mm" << endl;
+    }
     //ウィンドウ破棄
     cv::destroyAllWindows();
     outputfile.close();
