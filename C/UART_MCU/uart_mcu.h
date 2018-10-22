@@ -11,7 +11,6 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define ID 0x55
 #define SERIAL_PORT "/dev/ttyUSB0"
 
 int serial_init(int baudRate, int *);

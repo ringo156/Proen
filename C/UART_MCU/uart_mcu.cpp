@@ -1,7 +1,7 @@
 #include "uart_mcu.h"
 
 
-int serial_init(int baudRate, int *fd){    
+int serial_init(int baudRate, int *fd){
     unsigned char msg[] = "serial port open...\n";
     struct termios tio;
     *fd = open(SERIAL_PORT, O_RDWR);     // デバイスをオープンする
