@@ -11,9 +11,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define SERIAL_PORT "/dev/ttyUSB0"
-
-int serial_init(int baudRate, int *);
+int serial_init(int baudRate, int *fd, const char serial_port[]);
 void read_buf(int *);
 
 #endif
