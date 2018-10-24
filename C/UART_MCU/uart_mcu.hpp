@@ -11,7 +11,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-int serial_init(int baudRate, int *fd, const char serial_port[]);
+int serial_init(int baudRate, int *fd, const char serial_port[], struct termios *orgtio);
 void read_buf(int *);
 
 #endif

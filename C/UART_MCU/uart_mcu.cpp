@@ -1,7 +1,7 @@
 #include "uart_mcu.hpp"
 
 
-int serial_init(int baudRate, int *fd, const char serial_port[]){
+int serial_init(int baudRate, int *fd, const char serial_port[], struct termios *orgtio){
     unsigned char msg[] = "serial port open...\n";
     struct termios tio;
     *fd = open(serial_port, O_RDWR);     // デバイスをオープンする
@@ -9,15 +9,17 @@ int serial_init(int baudRate, int *fd, const char serial_port[]){
         printf("open error\n");
         return -1;
     }
+
+    ioctl(*fd, TCGETS, orgtio);
+    tio = *orgtio;
+
     tio.c_cflag += CREAD;               // 受信有効
     tio.c_cflag += CLOCAL;              // ローカルライン（モデム制御なし）
     tio.c_cflag += CS8;                 // データビット:8bit
     tio.c_cflag += 0;                   // ストップビット:1bit
     tio.c_cflag += 0;                   // パリティ:None
 
-    cfsetispeed( &tio, baudRate );
-    cfsetospeed( &tio, baudRate );
-
+    cfsetispeed(&tio, baudRate );
     cfmakeraw(&tio);                    // RAWモード
 
     tcsetattr( *fd, TCSANOW, &tio );     // デバイスに設定を行う

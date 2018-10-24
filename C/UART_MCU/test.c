@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <termios.h>
 #include "uart_mcu.hpp"
 
 #define SERIAL_PORT "/dev/ttyAMA0"
-#define BAUD_RATE B19200
+#define BAUD_RATE B9600
 
 
 // void tx_buf(const char[] string){
@@ -12,15 +13,15 @@
 
 int main(){
     int fd;
-    char buf[50];
+    struct termios orgtio;
 
-    serial_init(BAUD_RATE, &fd, SERIAL_PORT);
+    serial_init(BAUD_RATE, &fd, SERIAL_PORT, &orgtio);
 
-    while(1){
-        sprintf(buf, "test\r\n");
-        write(fd, buf, sizeof(buf));
-    }
+    char buf[] = "test\n";
+    write(fd, buf, sizeof(buf));
 
+    ioctl(fd, TCSETS, &orgtio);
     close(fd);
+
     return 0;
 }
