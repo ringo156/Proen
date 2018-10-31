@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
-#include "uart_mcu.hpp"
+#include "uart_mcu.h"
 
 #define SERIAL_PORT "/dev/ttyAMA0"
 #define BAUD_RATE B9600

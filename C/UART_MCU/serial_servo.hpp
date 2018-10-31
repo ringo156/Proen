@@ -11,22 +11,28 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
+#include "uart_mcu.h"
+
+using namespace std;
 
 
 class serialServo{
     private:
-        int baudRate;
-        int *fd; //file descriptor
-        const char serial_port[];
-        struct termios *orgtio;
-
+        int fd; //file descriptor
+        struct termios orgtio;
 
     public:
-    serialServo(){
+    serialServo(int baudRate, const char serialPort[]){
+        serial_init(baudRate, &fd, serialPort, &orgtio);
 
     }
     ~serialServo(){
-
+        cout << "connect close" << endl;
+        ioctl(fd, TCSETS, &orgtio);
+        close(fd);
+    }
+    void writeArray(const char buf[], int size){
+        write(fd, buf, size);
     }
 };
 

@@ -1,4 +1,4 @@
-#include "uart_mcu.hpp"
+#include "uart_mcu.h"
 
 
 int serial_init(int baudRate, int *fd, const char serial_port[], struct termios *orgtio){
@@ -27,6 +27,9 @@ int serial_init(int baudRate, int *fd, const char serial_port[], struct termios 
     ioctl(*fd, TCSETS, &tio);            // ポートの設定を有効にする
 
     printf("connect open\n");
+    
+    // char buf[] = "test\n";
+    // write(*fd, buf, sizeof(buf));
 
     return 0;
 
