@@ -19,10 +19,12 @@ int serial_init(int baudRate, int *fd, const char serial_port[], struct termios 
     tio.c_cflag += 0;                   // ストップビット:1bit
     tio.c_cflag += 0;                   // パリティ:None
 
-    cfsetispeed(&tio, baudRate );
-    cfmakeraw(&tio);                    // RAWモード
+    tio.c_cflag = (B115200 | CS8 | CLOCAL | CREAD | PARENB);
 
-    tcsetattr( *fd, TCSANOW, &tio );     // デバイスに設定を行う
+    // cfsetispeed(&tio, baudRate );
+    // cfmakeraw(&tio);                    // RAWモード
+
+    // tcsetattr( *fd, TCSANOW, &tio );     // デバイスに設定を行う
 
     ioctl(*fd, TCSETS, &tio);            // ポートの設定を有効にする
 
