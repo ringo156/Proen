@@ -56,9 +56,8 @@ int main(int argc, char* argv[])
         cv::Mat gray(frame.rows, frame.cols, CV_8UC1);
         cv::Vec3b* ptr = frame.ptr<cv::Vec3b>(0);
         uchar* g_ptr = gray.ptr<uchar>(0);
-
         int x = 0;
-        #pragma omp parallel for
+        #pragma omp parallel for private(x)
         for(int y = 0; y < frame.rows * frame.cols; y = y + frame.cols){
             for(x = 0; x < frame.cols; ++x){
                 cv::Vec3b bgr = ptr[x + y];
