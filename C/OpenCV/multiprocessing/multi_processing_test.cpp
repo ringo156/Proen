@@ -50,21 +50,21 @@ int main(int argc, char* argv[])
             break;
         }
 
-        // cv::Mat gray;
-        // cv::cvtColor(frame, gray, CV_BGR2GRAY);
+        cv::Mat gray;
+        cv::cvtColor(frame, gray, CV_BGR2GRAY);
 
-        cv::Mat gray(frame.rows, frame.cols, CV_8UC1);
-        cv::Vec3b* ptr = frame.ptr<cv::Vec3b>(0);
-        uchar* g_ptr = gray.ptr<uchar>(0);
-        int x = 0;
-        #pragma omp parallel for private(x)
-        for(int y = 0; y < frame.rows * frame.cols; y = y + frame.cols){
-            for(x = 0; x < frame.cols; ++x){
-                cv::Vec3b bgr = ptr[x + y];
-                //cout << "B:" << (int)bgr[0] << ", G" << (int)bgr[1] << ", R:" <<(int)bgr[2] << endl;
-                g_ptr[x + y] = (unsigned char)(0.114 * bgr[0] + 0.587 * bgr[1] + 0.299 * bgr[2]);
-            }
-        }
+        // cv::Mat gray(frame.rows, frame.cols, CV_8UC1);
+        // cv::Vec3b* ptr = frame.ptr<cv::Vec3b>(0);
+        // uchar* g_ptr = gray.ptr<uchar>(0);
+        // int x = 0;
+        // #pragma omp parallel for private(x)
+        // for(int y = 0; y < frame.rows * frame.cols; y = y + frame.cols){
+        //     for(x = 0; x < frame.cols; ++x){
+        //         cv::Vec3b bgr = ptr[x + y];
+        //         //cout << "B:" << (int)bgr[0] << ", G" << (int)bgr[1] << ", R:" <<(int)bgr[2] << endl;
+        //         g_ptr[x + y] = (unsigned char)(0.114 * bgr[0] + 0.587 * bgr[1] + 0.299 * bgr[2]);
+        //     }
+        // }
 
         // cvtColor(frame, dist, CV_BGR2HSV);
         // cv::inRange(dist, cv::Scalar(0, 0, 0, 0), cv::Scalar(10, 255, 255, 0), dist);
