@@ -8,6 +8,9 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
+#define RIGHT 2
+#define LEFT  1
+
 using namespace std;
 
 void median_one(const cv::Mat& src, cv::Mat& dist, const int size);
@@ -15,8 +18,11 @@ void median_one_ptr(const cv::Mat& src, cv::Mat& dist);
 
 int main(int argc, char* argv[])
 {
+    const std::string RIGHT_WIN = "RightCapture";
+    const std::string LEFT_WIN  = "LeftCapture";
+    CvCapture* capture = 0;
     const std::string WIN_NAME = "Capture";
-    const int CAP_WIDTH  = 1280;
+    const int CAP_WIDTH = 1280;
     const int CAP_HEIGHT = 960;
     const int samplingNum = 402;
     int count = 0;
@@ -29,47 +35,68 @@ int main(int argc, char* argv[])
     H_max = 15;
     H_min = 0;
     S_max = 255;
-    S_min = 122;
-    V_max = 224;
-    V_min = 66;
+    S_min = 0;
+    V_max = 143;
+    V_min = 36;
 
     cout << "device open"<< endl;
-    //デバイスのオープン
-    cv::VideoCapture cap(1);
+    //
+    cv::VideoCapture right(RIGHT);
+    cv::VideoCapture left(LEFT);
+    //
+    right.open(RIGHT);
+    left.open(LEFT);
 
-    // cap.open(1);
-
-    // オープン失敗？
-    if(!cap.isOpened())
+    //オープン失敗？
+    if(!right.isOpened())
+    {
+        std::cout << "ERROR: cannot open cam device." << std::endl;
+        return -1;
+    }
+    if(!left.isOpened())
     {
         std::cout << "ERROR: cannot open cam device." << std::endl;
         return -1;
     }
 
     // キャプチャサイズの設定
-    cap.set(CV_CAP_PROP_FRAME_WIDTH, CAP_WIDTH);
-    cap.set(CV_CAP_PROP_FRAME_HEIGHT, CAP_HEIGHT);
+    // cap.set(CV_CAP_PROP_FRAME_WIDTH, CAP_WIDTH);
+    // cap.set(CV_CAP_PROP_FRAME_HEIGHT, CAP_HEIGHT);
 
-     cv::Rect rect(140, 105, 1000, 750);
+    //キャプチャサイズの設定
+    right.set(CV_CAP_PROP_FRAME_WIDTH, CAP_WIDTH);
+    right.set(CV_CAP_PROP_FRAME_HEIGHT, CAP_HEIGHT);
+    left.set(CV_CAP_PROP_FRAME_HEIGHT, CAP_HEIGHT);
+    left.set(CV_CAP_PROP_FRAME_WIDTH, CAP_WIDTH);
+
+    cv::Rect rect(140, 105, 1000, 750);
 
     //ループ
     while(1)
     {
         struct timespec start_val;
-		clock_gettime(CLOCK_MONOTONIC, &start_val);
-
-        cv::Mat frame;
+		clock_gettime(CLOCK_MONOTONIC,&start_val);
+        //
+        cv::Mat right_frame;
+        cv::Mat left_frame;
         // 1フレームキャプチャ
-        // cap >> frame; //消すとめっちゃ早い
-        if (!cap.read(frame))
+        // right >> right_frame;
+        if (!right.read(right_frame))
+        {
+            std::cout << "ERROR: cannot capture." << std::endl;
+            break;
+        }
+        if (!left.read(left_frame))
         {
             std::cout << "ERROR: cannot capture." << std::endl;
             break;
         }
 
-        cv::Mat rect_image(frame, rect);
-        cv::resize(rect_image, rect_image, cv::Size(), 0.64, 0.64);
-        cv::imshow("rect", rect_image);
+        //resize
+        cv::Mat right_frame_r(right_frame, rect);
+        cv::resize(right_frame_r, right_frame_r, cv::Size(), 0.64, 0.64);
+        cv::Mat left_frame_r(left_frame, rect);
+        cv::resize(left_frame_r, left_frame_r, cv::Size(), 0.64, 0.64);
 
         // gray scale conversion--------------------------
         // cv::Mat gray;
@@ -88,36 +115,35 @@ int main(int argc, char* argv[])
         // }
 
         // binary conversion-----------------------
-        cv::Mat HSV;
-        cvtColor(rect_image, HSV, CV_BGR2HSV);
-        cv::inRange(HSV,
-            cv::Scalar(H_min, S_min, V_min, 0),
-            cv::Scalar(H_max,S_max,V_max, 0),
-            HSV);
+        // cv::Mat HSV;
+        // cvtColor(frame, HSV, CV_BGR2HSV);
+        // cv::inRange(HSV,
+        //     cv::Scalar(H_min, S_min, V_min, 0),
+        //     cv::Scalar(H_max,S_max,V_max, 0),
+        //     HSV);
 
         // noise remove
         // cv::Mat median;
-        medianBlur(HSV, HSV, 7);
+        // medianBlur(HSV, median, 7);
         // median_one(HSV, median, 7);
-        // median_one_ptr(HSV, HSV);
+       // median_one_ptr(HSV, median);
+
 
         //キー待ち
+        int inp_key = cv::waitKey(1);
+        //入力あり？
+        if (inp_key >= 0) {
+            // [ESC] or 'Q' or 'q'
+            if (inp_key == 27 || inp_key == 81 || inp_key == 113) break;
+            else if (inp_key == 's'){
+                //cv::imwrite("cam.jpg", frame);
+            }
+        }
 
-        //表示
-        // cv::imshow(WIN_NAME, frame);
-        // cv::imshow("result", median);
-        cv::imshow("HSV", HSV);
-
-
-        // printf("elapsed time = ");
-        // if (end.tv_nsec < start_val.tv_nsec) {
-        //   printf("%5ld.%09ld", end.tv_sec - start_val.tv_sec - 1,
-        //          end.tv_nsec + (long int)1.0e+9 - start_val.tv_nsec);
-        // } else {
-        //   printf("%5ld.%09ld", end.tv_sec - start_val.tv_sec,
-        //          end.tv_nsec - start_val.tv_nsec);
-        // }
-        // printf(" sec \n");
+        cv::imshow(RIGHT_WIN, right_frame_r);
+        // cv::imshow("right result", right_frame);
+        cv::imshow(LEFT_WIN, left_frame_r);
+        // cv::imshow("left result", left_frame);
 
         struct timespec end;
 		clock_gettime(CLOCK_MONOTONIC,&end);
@@ -130,8 +156,8 @@ int main(int argc, char* argv[])
 		msec = sec*1000+nsec/1000000;
 
         printf("time = %f, nsec = %ld\n", msec, nsec);
-        // cout << "time = " << msec << "\n";
-        // "ms, d.x = " << d.x << "pixel, " << "z = " << dis << "mm" << endl;
+
+        // cout << "time = " << msec << "ms, d.x = " << d.x << "pixel, " << "z = " << dis << "mm" << endl;
 
         if(count > 4){
             totaltime_ns += nsec;
@@ -143,16 +169,22 @@ int main(int argc, char* argv[])
         }
         count++;
 
-        int inp_key = cv::waitKey(1);
-        //入力あり？
-        if (inp_key >= 0) {
-            // [ESC] or 'Q' or 'q'
-            if (inp_key == 27 || inp_key == 81 || inp_key == 113) break;
-            else if (inp_key == 's'){
-                cv::imwrite("cam.jpg", frame);
-            }
-        }
+        // struct timespec end;
+		// clock_gettime(CLOCK_REALTIME,&end);
+        //
+        // printf("elapsed time = ");
+        // if (end.tv_nsec < start_val.tv_nsec) {
+        //   printf("%5ld.%09ld", end.tv_sec - start_val.tv_sec - 1,
+        //          end.tv_nsec + (long int)1.0e+9 - start_val.tv_nsec);
+        // } else {
+        //   printf("%5ld.%09ld", end.tv_sec - start_val.tv_sec,
+        //          end.tv_nsec - start_val.tv_nsec);
+        // }
+        // printf(" sec \n");
 
+        //表示
+        // cv::imshow(WIN_NAME, frame);
+        // cv::imshow("result", median);
     } //end of while
 
     //ウィンドウ破棄
@@ -186,7 +218,6 @@ void median_one(const cv::Mat& src, cv::Mat& dist, const int size){
 void median_one_ptr(const cv::Mat& src, cv::Mat& dist){
     dist = src.clone();
     uchar* ptr = dist.ptr<unsigned char>(0);
-
     int buf = 0;
     for(int y = 0; y < src.rows * src.cols; y = y + src.cols){
         for(int x = 14; x < src.cols - 15; x++){
@@ -201,25 +232,6 @@ void median_one_ptr(const cv::Mat& src, cv::Mat& dist){
                 }
                 else{
                     ptr[y + x - 7] = 255;
-                }
-            }
-        }
-    }
-    // imshow("image", dist);
-    ptr = dist.ptr<unsigned char>(0);
-    for(int x = 0; x < src.cols; x = ++x){
-        for(int y = 14; y < src.rows - 15; y++){
-            buf = 0;
-            for(int i = 0; i < 15; i++){
-                if((int)ptr[(y * src.cols) + x + (i * src.cols) - (7 * src.cols) ] == 0){// here
-                    buf++;
-                }
-                if(buf == 9){
-                    ptr[(y * src.cols) + x - (7 * src.cols)] = 0;
-                    break;
-                }
-                else{
-                    ptr[(y * src.cols) + x - (7 * src.cols)] = 255;
                 }
             }
         }
